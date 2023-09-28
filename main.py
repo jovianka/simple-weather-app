@@ -6,17 +6,6 @@ import requests
 from datetime import datetime
 import json
 
-
-location: {
-  "jakarta_pusat": (-8.7909, 115),
-  "bogor": (-6.5944, 106.7892),
-  "depok": (-6.4, 106.8186),
-  "tangerang": (-6.1781, 106.63),
-  "bekasi": (-6.2349, 106.9896),
-}
-
-data = requests.get(f"https://api.open-meteo.com/v1/forecast?latitude={location.jakarta_pusat[0]}&longitude=115.1601&hourly=temperature_2m,dewpoint_2m,apparent_temperature")
-
 conn = st.experimental_connection("gsheets", type=GSheetsConnection)
 df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
 
