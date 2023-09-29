@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 import altair as alt
 from streamlit_gsheets import GSheetsConnection
 import requests
@@ -8,25 +7,30 @@ import pygsheets
 conn = st.experimental_connection("gsheets", type=GSheetsConnection)
 df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
 
-# client = pygsheets.authorize()
-# sheets = client.open('sickathon-weather')
+client = pygsheets.authorize(service_account_file=".streamlit/unique-voyage-354204-5359857be23a.json")
+sheets = client.open('sickathon-weather')
 
-# locations = {
-#   "Jakarta Pusat": (-8.7909, 115),
-#   "Bogor": (-6.5944, 106.7892),
-#   "Depok": (-6.4, 106.8186),
-#   "Tangerang": (-6.1781, 106.63),
-#   "Bekasi": (-6.2349, 106.9896),
-# }
+locations = {
+    "Jakarta Pusat": (-8.7909, 115),
+    "Bogor": (-6.5944, 106.7892),
+    "Depok": (-6.4, 106.8186),
+    "Tangerang": (-6.1781, 106.63),
+    "Bekasi": (-6.2349, 106.9896),
+}
 
-# location = st.selectbox("Please pick your location", ("Jakarta Pusat", "Bogor", "Depok", "Tangerang", "Bekasi"), index=None, placeholder="--Location--")
+location = "Jakarta Pusat"
 
-# data = requests.get("https://api.open-meteo.com/v1/forecast", params={ "latitude": locations[location][0], \
-#                                                                       "longitude": locations[location][1], \
-#                                                                       "hourly": ["temperature_2m", "dewpoint_2m", "apparent_temperature"]}).json()
+location = st.selectbox("Please pick your location", ("Jakarta Pusat", "Bogor", "Depok", "Tangerang", "Bekasi"), index=None, placeholder="--Location--")
 
-# conn = st.experimental_connection("gsheets", type=GSheetsConnection)
-# df = conn.read(url="https://docs.google.com/spreadsheets/d/1KQ_vqbycPrnZGtn2Ylk_cT8bpCkzsmf2KklJasKr9K4/edit?usp=sharing")
+data = requests.get("https://api.open-meteo.com/v1/forecast", params={ "latitude": locations[location][0], \
+                                                                      "longitude": locations[location][1], \
+                                                                      "hourly": ["temperature_2m", "dewpoint_2m", "apparent_temperature"]}).json()
+
+wks = sheets.sheet1
+
+wks.update_col(8, [data["hourly"]["temperature_2m"]], 1)
+wks.update_col(9, [data["hourly"]["dewpoint_2m"]], 1)
+wks.update_col(10, [data["hourly"]["apparent_temperature"]], 1)
 
 def get_chart(df, weather_variable):
     hover = alt.selection_point(
