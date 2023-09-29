@@ -9,6 +9,7 @@ df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet
 
 client = pygsheets.authorize(service_account_file=".streamlit/unique-voyage-354204-5359857be23a.json")
 sheets = client.open('sickathon-weather')
+wks = sheets.sheet1
 
 locations = {
     "Jakarta Pusat": (-8.7909, 115),
@@ -20,17 +21,7 @@ locations = {
 
 location = "Jakarta Pusat"
 
-location = st.selectbox("Please pick your location", ("Jakarta Pusat", "Bogor", "Depok", "Tangerang", "Bekasi"), index=None, placeholder="--Location--")
-
-data = requests.get("https://api.open-meteo.com/v1/forecast", params={ "latitude": locations[location][0], \
-                                                                      "longitude": locations[location][1], \
-                                                                      "hourly": ["temperature_2m", "dewpoint_2m", "apparent_temperature"]}).json()
-
-wks = sheets.sheet1
-
-wks.update_col(8, [data["hourly"]["temperature_2m"]], 1)
-wks.update_col(9, [data["hourly"]["dewpoint_2m"]], 1)
-wks.update_col(10, [data["hourly"]["apparent_temperature"]], 1)
+location = st.selectbox("Please pick your location", ("Jakarta Pusat", "Bogor", "Depok", "Tangerang", "Bekasi"), index=0, placeholder="--Location--")
 
 def get_chart(df, weather_variable):
     hover = alt.selection_point(
@@ -126,12 +117,29 @@ def get_chart(df, weather_variable):
     elif weather_variable == "apparent_temperature":
         return (lines_apparent_temperature + points_apparent_temperature + tooltips_apparent_temperature).interactive()
 
-chart_temperature = get_chart(df, "temperature")
-chart_dewpoint = get_chart(df, "dewpoint")
-chart_apparent_temperature = get_chart(df, "apparent_temperature")
+if st.button("Predict!"):
+    data = requests.get("https://api.open-meteo.com/v1/forecast", params={ "latitude": locations[location][0], \
+                                                                        "longitude": locations[location][1], \
+                                                                        "timezone": "Asia/Singapore", \
+                                                                        "hourly": ["temperature_2m", "dewpoint_2m", "apparent_temperature"]}).json()
 
-st.header("Weather in Jimbaran")
+    wks.update_col(1, [data["latitude"]], 1)
+    wks.update_col(2, [data["longitude"]], 1)
+    wks.update_col(3, [data["elevation"]], 1)
+    wks.update_col(4, [data["utc_offset_seconds"]], 1)
+    wks.update_col(5, [data["timezone"]], 1)
+    wks.update_col(6, [data["timezone_abbreviation"]], 1)
+    wks.update_col(7, [data["hourly"]["time"]], 1)
+    wks.update_col(8, [data["hourly"]["temperature_2m"]], 1)
+    wks.update_col(9, [data["hourly"]["dewpoint_2m"]], 1)
+    wks.update_col(10, [data["hourly"]["apparent_temperature"]], 1)
+    
+    chart_temperature = get_chart(df, "temperature")
+    chart_dewpoint = get_chart(df, "dewpoint")
+    chart_apparent_temperature = get_chart(df, "apparent_temperature")
 
-st.altair_chart(chart_temperature, use_container_width=True)
-st.altair_chart(chart_dewpoint, use_container_width=True)
-st.altair_chart(chart_apparent_temperature, use_container_width=True)
+    st.header(f"How hot is it in {location}?")
+
+    st.altair_chart(chart_temperature, use_container_width=True)
+    st.altair_chart(chart_dewpoint, use_container_width=True)
+    st.altair_chart(chart_apparent_temperature, use_container_width=True)
