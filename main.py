@@ -3,24 +3,30 @@ import pandas as pd
 import altair as alt
 from streamlit_gsheets import GSheetsConnection
 import requests
-from datetime import datetime
-import json
+import pygsheets
 
+# conn = st.experimental_connection("gsheets", type=GSheetsConnection)
+# df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
 
-location: {
-  "jakarta_pusat": (-8.7909, 115),
-  "bogor": (-6.5944, 106.7892),
-  "depok": (-6.4, 106.8186),
-  "tangerang": (-6.1781, 106.63),
-  "bekasi": (-6.2349, 106.9896),
-}
+# client = pygsheets.authorize()
+# sheets = client.open('sickathon-weather')
 
-data = requests.get(f"https://api.open-meteo.com/v1/forecast?latitude={location.jakarta_pusat[0]}&longitude=115.1601&hourly=temperature_2m,dewpoint_2m,apparent_temperature")
+# locations = {
+#   "Jakarta Pusat": (-8.7909, 115),
+#   "Bogor": (-6.5944, 106.7892),
+#   "Depok": (-6.4, 106.8186),
+#   "Tangerang": (-6.1781, 106.63),
+#   "Bekasi": (-6.2349, 106.9896),
+# }
+
+# location = st.selectbox("Please pick your location", ("Jakarta Pusat", "Bogor", "Depok", "Tangerang", "Bekasi"), index=None, placeholder="--Location--")
+
+# data = requests.get("https://api.open-meteo.com/v1/forecast", params={ "latitude": locations[location][0], \
+#                                                                       "longitude": locations[location][1], \
+#                                                                       "hourly": ["temperature_2m", "dewpoint_2m", "apparent_temperature"]}).json()
 
 conn = st.experimental_connection("gsheets", type=GSheetsConnection)
-df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
-
-# Time
+df = conn.read(url="https://docs.google.com/spreadsheets/d/1KQ_vqbycPrnZGtn2Ylk_cT8bpCkzsmf2KklJasKr9K4/edit?usp=sharing")
 
 def get_chart(df, weather_variable):
   hover = alt.selection_point(
@@ -47,7 +53,7 @@ def get_chart(df, weather_variable):
       .mark_rule()
       .encode(
           x=alt.X("time:T").title("Date").axis(format="%d - %B"),
-          y=alt.Y("temperature_2m").title("Temperature"),
+          y=alt.Y("temperature_2m").title("Temperature (°C)"),
           opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
           tooltip=[
             alt.Tooltip("time:T", title="Time", format="%a, %d %B %Y %H:%M"),
@@ -73,7 +79,7 @@ def get_chart(df, weather_variable):
       .mark_rule()
       .encode(
           x=alt.X("time:T").title("Date").axis(format="%d - %B"),
-          y=alt.Y("dewpoint_2m").title("Dewpoint"),
+          y=alt.Y("dewpoint_2m").title("Dewpoint (°C)"),
           opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
           tooltip=[
             alt.Tooltip("time:T", title="Time", format="%a, %d %B %Y %H:%M"),
@@ -99,7 +105,7 @@ def get_chart(df, weather_variable):
       .mark_rule()
       .encode(
           x=alt.X("time:T").title("Date").axis(format="%d - %B"),
-          y=alt.Y("apparent_temperature").title("Apparent Temperature"),
+          y=alt.Y("apparent_temperature").title("Apparent Temperature (°C)"),
           opacity=alt.condition(hover, alt.value(0.3), alt.value(0)),
           tooltip=[
             alt.Tooltip("time:T", title="Time", format="%a, %d %B %Y %H:%M"),
@@ -127,4 +133,3 @@ st.header("Weather in Jimbaran")
 st.altair_chart(chart_temperature, use_container_width=True)
 st.altair_chart(chart_dewpoint, use_container_width=True)
 st.altair_chart(chart_apparent_temperature, use_container_width=True)
-st.altair_chart(chart_all, use_container_width=True)
