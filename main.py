@@ -128,17 +128,18 @@ if st.button("Predict!"):
         "apparent_temperature": data["hourly"]["apparent_temperature"]
     })
 
+    # Update sheets
     conn.update(spreadsheet=st.secrets.connections.gsheets.spreadsheet,
                 worksheet=st.secrets.connections.gsheets.worksheet,
                 data=pd.DataFrame.from_dict(data_df, orient="columns"))
 
-    conn.reset()
-    df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
+    # conn.reset()
+    # df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
 
 
-    chart_temperature = get_chart(df, "temperature")
-    chart_dewpoint = get_chart(df, "dewpoint")
-    chart_apparent_temperature = get_chart(df, "apparent_temperature")
+    chart_temperature = get_chart(data_df, "temperature")
+    chart_dewpoint = get_chart(data_df, "dewpoint")
+    chart_apparent_temperature = get_chart(data_df, "apparent_temperature")
 
 
     st.header(f"How hot is it in {location}?")
