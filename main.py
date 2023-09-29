@@ -5,7 +5,6 @@ import requests
 import pygsheets
 
 conn = st.experimental_connection("gsheets", type=GSheetsConnection)
-df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
 
 client = pygsheets.authorize(service_account_file=".streamlit/unique-voyage-354204-5359857be23a.json")
 sheets = client.open('sickathon-weather')
@@ -118,6 +117,7 @@ def get_chart(df, weather_variable):
         return (lines_apparent_temperature + points_apparent_temperature + tooltips_apparent_temperature).interactive()
 
 if st.button("Predict!"):
+    df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
     data = requests.get("https://api.open-meteo.com/v1/forecast", params={ "latitude": locations[location][0], \
                                                                         "longitude": locations[location][1], \
                                                                         "timezone": "Asia/Singapore", \
