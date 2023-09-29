@@ -4,6 +4,9 @@ from streamlit_gsheets import GSheetsConnection
 import requests
 import pygsheets
 
+
+st.header("Jabodetabek Weather Forecast!")
+
 conn = st.experimental_connection("gsheets", type=GSheetsConnection)
 
 client = pygsheets.authorize(service_account_file=".streamlit/unique-voyage-354204-5359857be23a.json")
@@ -117,7 +120,6 @@ def get_chart(df, weather_variable):
         return (lines_apparent_temperature + points_apparent_temperature + tooltips_apparent_temperature).interactive()
 
 if st.button("Predict!"):
-    df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
     data = requests.get("https://api.open-meteo.com/v1/forecast", params={ "latitude": locations[location][0], \
                                                                         "longitude": locations[location][1], \
                                                                         "timezone": "Asia/Singapore", \
@@ -133,6 +135,8 @@ if st.button("Predict!"):
     wks.update_col(8, [data["hourly"]["temperature_2m"]], 1)
     wks.update_col(9, [data["hourly"]["dewpoint_2m"]], 1)
     wks.update_col(10, [data["hourly"]["apparent_temperature"]], 1)
+
+    df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
     
     chart_temperature = get_chart(df, "temperature")
     chart_dewpoint = get_chart(df, "dewpoint")
