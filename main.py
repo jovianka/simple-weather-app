@@ -142,7 +142,7 @@ if st.button("Predict!"):
     chart_apparent_temperature = get_chart(data_df, "apparent_temperature")
 
 
-    st.header(f"How hot is it in {location}?")
+    st.header(f"How hot will it be in {location}?")
     st.altair_chart(chart_temperature, use_container_width=True)
     st.altair_chart(chart_dewpoint, use_container_width=True)
     st.altair_chart(chart_apparent_temperature, use_container_width=True)
