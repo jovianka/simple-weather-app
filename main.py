@@ -115,15 +115,12 @@ def get_chart(df, weather_variable):
         )
     
     
-    match weather_variable:
-        case "temperature":
-            return (lines_temperature + points_temperature + tooltips_temperature).interactive()
-
-        case "dewpoint":
-            return (lines_dewpoint + points_dewpoint + tooltips_dewpoint).interactive()
-
-        case "apparent_temperature":
-            return (lines_apparent_temperature + points_apparent_temperature + tooltips_apparent_temperature).interactive()
+    if weather_variable == "temperature":
+        return (lines_temperature + points_temperature + tooltips_temperature).interactive()
+    elif weather_variable == "dewpoint":
+        return (lines_dewpoint + points_dewpoint + tooltips_dewpoint).interactive()
+    elif weather_variable == "apparent_temperature":
+        return (lines_apparent_temperature + points_apparent_temperature + tooltips_apparent_temperature).interactive()
 
 chart_temperature = get_chart(df, "temperature")
 chart_dewpoint = get_chart(df, "dewpoint")
