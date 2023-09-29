@@ -15,10 +15,9 @@ locations = {
     "Depok": (-6.4, 106.8186),
     "Tangerang": (-6.1781, 106.63),
     "Bekasi": (-6.2349, 106.9896),
-    "Jimbaran": (-8.7909, 115.1601)
 }
 
-location = st.selectbox("Please pick your location", ("Jakarta Pusat", "Bogor", "Depok", "Tangerang", "Bekasi", "Jimbaran"), index=0, placeholder="--Location--")
+location = st.selectbox("Please pick your location", ("Jakarta Pusat", "Bogor", "Depok", "Tangerang", "Bekasi"), index=0, placeholder="--Location--")
 
 
 def get_chart(df, weather_variable):
