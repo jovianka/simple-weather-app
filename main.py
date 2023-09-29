@@ -5,8 +5,8 @@ from streamlit_gsheets import GSheetsConnection
 import requests
 import pygsheets
 
-# conn = st.experimental_connection("gsheets", type=GSheetsConnection)
-# df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
+conn = st.experimental_connection("gsheets", type=GSheetsConnection)
+df = conn.read(spreadsheet=st.secrets.connections.gsheets.spreadsheet, worksheet=st.secrets.connections.gsheets.worksheet)
 
 # client = pygsheets.authorize()
 # sheets = client.open('sickathon-weather')
@@ -25,8 +25,8 @@ import pygsheets
 #                                                                       "longitude": locations[location][1], \
 #                                                                       "hourly": ["temperature_2m", "dewpoint_2m", "apparent_temperature"]}).json()
 
-conn = st.experimental_connection("gsheets", type=GSheetsConnection)
-df = conn.read(url="https://docs.google.com/spreadsheets/d/1KQ_vqbycPrnZGtn2Ylk_cT8bpCkzsmf2KklJasKr9K4/edit?usp=sharing")
+# conn = st.experimental_connection("gsheets", type=GSheetsConnection)
+# df = conn.read(url="https://docs.google.com/spreadsheets/d/1KQ_vqbycPrnZGtn2Ylk_cT8bpCkzsmf2KklJasKr9K4/edit?usp=sharing")
 
 def get_chart(df, weather_variable):
   hover = alt.selection_point(
@@ -114,15 +114,16 @@ def get_chart(df, weather_variable):
       ).add_params(hover)
     )
   
+  
   match weather_variable:
-    case "temperature":
-      return (lines_temperature + points_temperature + tooltips_temperature).interactive()
+      case "temperature":
+          return (lines_temperature + points_temperature + tooltips_temperature).interactive()
 
-    case "dewpoint":
-      return (lines_dewpoint + points_dewpoint + tooltips_dewpoint).interactive()
+      case "dewpoint":
+          return (lines_dewpoint + points_dewpoint + tooltips_dewpoint).interactive()
 
-    case "apparent_temperature":
-      return (lines_apparent_temperature + points_apparent_temperature + tooltips_apparent_temperature).interactive()
+      case "apparent_temperature":
+          return (lines_apparent_temperature + points_apparent_temperature + tooltips_apparent_temperature).interactive()
 
 chart_temperature = get_chart(df, "temperature")
 chart_dewpoint = get_chart(df, "dewpoint")
