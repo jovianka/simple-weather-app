@@ -1,5 +1,5 @@
 # Simple Weather App
-
+ 
 ![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)
 ![LICENSE](https://img.shields.io/github/license/jovianka/simple-weather-app?style=for-the-badge)
@@ -8,8 +8,9 @@ With this app you can view weather conditions in your area displayed using graph
 
 ## Prerequisites 📋
 
-- Python 3.11.5 or higher
-- Streamlit 1.27.0 or higher
+- python 3.11.5 or higher
+- pip
+- Dependencies: streamlit 1.27.0 or higher, st-gsheets-connection
 
 ## Installation 🛠
 
@@ -26,7 +27,7 @@ pip install -r requirements.txt
 ```
 
 - Set up secret for database connection (Google Sheets):
-See [this page](https://github.com/streamlit/gsheets-connection/tree/main#service-account--crud-example) to learn about connecting streamlit app to Google Sheets
+See [this page](https://github.com/streamlit/gsheets-connection/tree/main#service-account--crud-example) to learn about connecting streamlit app to Google Sheets using the [st-gsheets-connection](https://github.com/streamlit/gsheets-connection) package.
 
 - Run the application:
 
@@ -36,7 +37,7 @@ streamlit run main.py
 
 ## Story
 ### How We Built It?
-First, we search for an API that can be used for forecasting weather, and we found the Weather Forecast API from [Open Meteo](https://open-meteo.com). Second, we tried to change the API response from JSON format to XLSX and store it in Google Sheets. By that, we don't need to use any SQL database system. After that, we use `st.experimental_connection("gsheets", type=GSheetsConnection)` to connect our application to Google Sheets. We also use altair for data visualization.
+This app is based on the Weather Forecast API from [Open Meteo](https://open-meteo.com) and streamlit. Here's how the app works: We make a request to get data on some weather variables (currently 3), extracted data from the response to a `pandas DataFrame`. Then, we used `st.experimental_connection("gsheets", type=GSheetsConnection)` to connect our app to a google sheets spreadsheet and updated the spreadsheet based on the data. After that, we display the data using line charts made with `st.altair_chart()`.
 
 ### Challenges We Ran Into
 Using altair, hardware problems (slows down development) python indentations, pip packages dependency conflict, and minimal understanding of data science ecosystem in python.
