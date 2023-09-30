@@ -26,7 +26,7 @@ git clone https://github.com/jovianka/simple-weather-app.git
 pip install -r requirements.txt
 ```
 
-- Set up secret for database connection (Google Sheets):
+- Set up secrets for database connection (Google Sheets):
 See [this page](https://github.com/streamlit/gsheets-connection/tree/main#service-account--crud-example) to learn about connecting streamlit app to Google Sheets using the [st-gsheets-connection](https://github.com/streamlit/gsheets-connection) package.
 
 - Run the application:
