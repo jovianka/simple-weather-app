@@ -20,6 +20,12 @@ With this app you can view weather conditions in your area displayed using graph
 git clone https://github.com/jovianka/simple-weather-app.git
 ```
 
+- Make a virtual environment and activate it
+```bash
+python -m venv .venv
+source | .venv/bin/activate
+```
+
 - Install the packages:
 
 ```bash
